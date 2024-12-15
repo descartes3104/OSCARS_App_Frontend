@@ -1,7 +1,8 @@
 "use client";
 
 import { Suspense } from "react";
-import OneCustomerInfoCard from "@/components/one_customer_info_card";
+import { useState, useEffect } from "react";  // 追加：必要なhooksのインポート
+import OneCustomerInfoCard from "../../components/one_customer_info_card";  // パスを相対パスに変更
 
 async function fetchCustomer(id) {
   if (!id) throw new Error("Customer ID is required");
