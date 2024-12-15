@@ -11,11 +11,16 @@ export default function ConfirmPage() {
 
     useEffect(() => {
         const fetchAndSetCustomer = async () => {
-            const customerData = await fetchCustomer(customer_id);
-            setCustomer(customerData[0]);
+            try {
+                const customerData = await fetchCustomer(customer_id);
+                setCustomer(customerData[0]);
+            } catch (error) {
+                console.error("Failed to fetch customer:", error);
+                setCustomer(null); // 必要に応じてデフォルト値を設定
+            }
         };
         fetchAndSetCustomer();
-    }, []);
+    }, [customer_id]);
 
     return (
         <>
@@ -23,13 +28,17 @@ export default function ConfirmPage() {
                 <div className="alert alert-success p-4 text-center">
                     正常に作成しました
                 </div>
-                <OneCustomerInfoCard {...customer} />
-                <button onClick={() => router.push("./../../customers")}>
+                {customer ? (
+                    <OneCustomerInfoCard {...customer} />
+                ) : (
+                    <div>Loading...</div>
+                )}
+                <button onClick={() => router.push("/customers")}>
                     <div className="btn btn-primary m-4 text-2xl">
                         戻る
                     </div>
                 </button>
             </div>
         </>
-    )
+    );
 }
