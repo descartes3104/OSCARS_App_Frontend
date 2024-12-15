@@ -1,17 +1,51 @@
-import OneCustomerInfoCard from "src/app/components/one_customer_info_card.jsx"
+"use client";
 
+import { Suspense } from "react";
+import OneCustomerInfoCard from "@/components/one_customer_info_card";
 
 async function fetchCustomer(id) {
-  const res = await fetch(process.env.API_ENDPOINT + `/customers?customer_id=${id}`);
+  if (!id) throw new Error("Customer ID is required");
+  
+  const res = await fetch(`${process.env.API_ENDPOINT}/customers?customer_id=${id}`);
   if (!res.ok) {
-    throw new Error('Failed to fetch customer');
+    throw new Error("Failed to fetch customer");
   }
   return res.json();
 }
 
-export default async function ReadPage({ query }) {
-  const { id } = query;
-  const customerInfo = await fetchCustomer(id);
+function CustomerContent({ customerId }) {
+  const [customer, setCustomer] = useState(null);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    async function loadData() {
+      try {
+        const data = await fetchCustomer(customerId);
+        setCustomer(data[0]);
+      } catch (err) {
+        setError(err.message);
+      }
+    }
+    
+    if (customerId) {
+      loadData();
+    }
+  }, [customerId]);
+
+  if (error) {
+    return (
+      <div className="alert alert-error">
+        <p>{error}</p>
+        <a href="/customers" className="btn btn-outline btn-accent">
+          一覧に戻る
+        </a>
+      </div>
+    );
+  }
+
+  if (!customer) {
+    return <div className="loading loading-spinner loading-lg"></div>;
+  }
 
   return (
     <>
@@ -19,11 +53,24 @@ export default async function ReadPage({ query }) {
         更新しました
       </div>
       <div className="card bordered bg-white border-blue-200 border-2 max-w-sm m-4">
-        <OneCustomerInfoCard {...customerInfo[0]} />
+        <OneCustomerInfoCard customer={customer} />
       </div>
-      <button className="btn btn-outline btn-accent">
-        <a href="/customers">一覧に戻る</a>
-      </button>
+      <a 
+        href="/customers"
+        className="btn btn-outline btn-accent"
+      >
+        一覧に戻る
+      </a>
     </>
-  )
+  );
+}
+
+export default function CheckPage({ searchParams }) {
+  const customerId = searchParams?.customer_id;
+
+  return (
+    <Suspense fallback={<div className="loading loading-spinner loading-lg"></div>}>
+      <CustomerContent customerId={customerId} />
+    </Suspense>
+  );
 }
