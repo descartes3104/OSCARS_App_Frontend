@@ -15,7 +15,7 @@ export default function ConfirmPage(props) {
       setCustomer(customerData[0]);
     };
     fetchAndSetCustomer();
-  }, []);
+  }, [id]);
 
   return (
     <>
