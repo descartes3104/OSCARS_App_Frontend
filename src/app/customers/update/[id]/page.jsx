@@ -16,7 +16,7 @@ export default function UpdatePage(props) {
       setCustomerInfo(customerData[0]);
     };
     fetchAndSetCustomer();
-  }, []);
+  }, [id]);
 
   const handleSubmit = async (event) => {
     event.preventDefault();
