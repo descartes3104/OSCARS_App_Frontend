@@ -21,6 +21,10 @@ jobs:
         with:
           node-version: '20.x'
 
+      # キャッシュのクリアを追加
+      - name: Clear Node.js Cache
+        run: npm cache clean --force
+
       - name: Install dependencies and fix vulnerabilities
         run: |
           npm install
