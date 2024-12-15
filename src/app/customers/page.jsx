@@ -13,7 +13,7 @@ export default function Page() {
       setCustomerInfos(customerData);
     };
     fetchAndSetCustomer();
-  }, [id]);
+  }, []);
 
   return (
     <>
